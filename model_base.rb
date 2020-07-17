@@ -1,7 +1,7 @@
 require 'active_support/inflector'
-require_relative 'question_database'
+require_relative 'questions_database'
 
-class ModelBase < ModelBase
+class ModelBase
     def self.table
         self.to_s.tableize
     end

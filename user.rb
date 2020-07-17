@@ -1,12 +1,13 @@
-require_relative 'question_database'
+require_relative 'questions_database'
 require_relative 'question'
 require_relative 'question_follow'
 require_relative 'question_like'
 require_relative 'reply'
+require_relative 'model_base'
 
 class User < ModelBase
     def self.find_by_id(id)
-        user_data = QuestionsDatabase.execute(<<-SQL, id: id)
+        user_data = QuestionsDatabase.get_first_row(<<-SQL, id: id)
             SELECT
                 users.*
             FROM
@@ -29,15 +30,14 @@ class User < ModelBase
                 users.fname = :fname AND users.lname = :lname
         SQL
 
-        user.data.nil? nil : User.new(user_data)
+        user_data.nil? ? nil : User.new(user_data)
     end
 
     attr_reader :id
-    attr_accessor: :fname, :lname
+    attr_accessor :fname, :lname
     
     def initialize(options = {})
-        @id, @fname, @lname =
-        options.values_at('id', 'fname', 'lname')
+        @id, @fname, @lname = options.values_at('id', 'fname', 'lname')
     end
 
     def attrs
@@ -57,7 +57,7 @@ class User < ModelBase
     end
 
     def liked_questions
-        QuestionLike.liked_question_for_user_id(id)
+        QuestionLike.liked_questions_for_user_id(id)
     end
 
     def save
@@ -78,7 +78,7 @@ class User < ModelBase
                     (:fname, :lname)
             SQL
 
-            @id = QuestionsDatabase.last.insert_row_id
+            @id = QuestionsDatabase.last_insert_row_id
         end
         self
     end
@@ -101,7 +101,7 @@ class User < ModelBase
         QuestionsDatabase.get_first_value(<<-SQL, author_id: self.id)
             SELECT
                 CAST(COUNT(question_likes.id) AS FLOAT) /
-                    COUNT(DISTINCT(question.id)) AS avg_karma
+                    COUNT(DISTINCT(questions.id)) AS avg_karma
             FROM
                 questions
             LEFT OUTER JOIN

@@ -1,6 +1,7 @@
-require_relative 'question_database'
+require_relative 'questions_database'
 require_relative 'user'
 require_relative 'question'
+require_relative 'model_base'
 
 class QuestionLike < ModelBase
     def self.likers_for_question_id(question_id)
@@ -35,7 +36,7 @@ class QuestionLike < ModelBase
         SQL
     end
 
-    def self.liked_question_for_user_id(user_id)
+    def self.liked_questions_for_user_id(user_id)
         questions_data = QuestionsDatabase.execute(<<-SQL, user_id: user_id)
             SELECT
                 questions.*

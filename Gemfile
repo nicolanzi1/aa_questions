@@ -6,4 +6,10 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
+gem 'activesupport'
+
+gem 'byebug'
+
+gem 'rspec'
+
 gem 'sqlite3'

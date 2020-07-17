@@ -1,7 +1,7 @@
 require 'sqlite3'
 require 'singleton'
 
-class QuestionsDBConnection < SQLite3::Database
+class QuestionsDatabase < SQLite3::Database
     include Singleton
 
     SQL_FILE = File.join(File.dirname(__FILE__), 'import_db.sql')
