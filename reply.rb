@@ -5,7 +5,7 @@ require_relative 'model_base'
 
 class Reply < ModelBase
     def self.find(id)
-        reply_data = QuestionsDatabase.execute(<<-SQL, id: id)
+        reply_data = QuestionsDatabase.get_first_row(<<-SQL, id: id)
             SELECT
                 replies.*
             FROM
@@ -18,7 +18,7 @@ class Reply < ModelBase
     end
 
     def self.find_by_parent_id(parent_id)
-        reply_data = QuestionsDatabase.execute(<<-SQL, parent_reply_id: parent_id)
+        replies_data = QuestionsDatabase.execute(<<-SQL, parent_reply_id: parent_id)
             SELECT
                 replies.*
             FROM
