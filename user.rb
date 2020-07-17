@@ -4,7 +4,7 @@ require_relative 'question_follow'
 require_relative 'question_like'
 require_relative 'reply'
 
-class User
+class User < ModelBase
     def self.find_by_id(id)
         user_data = QuestionsDatabase.execute(<<-SQL, id: id)
             SELECT
