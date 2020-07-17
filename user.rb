@@ -52,22 +52,6 @@ class User < ModelBase
         Reply.find_by_user_id(id)
     end
 
-    def average_karma
-        QuestionsDatabase.get_first_value(<<-SQL, author_id: self.id)
-            SELECT
-                CAST(COUNT(question_likes.id) AS FLOAT) /
-                    COUNT(DISTINCT(question.id)) AS avg_karma
-            FROM
-                questions
-            LEFT OUTER JOIN
-                question_likes
-            ON
-                questions.id = question_likes.question_id
-            WHERE
-                questions.author_id = :author_id
-        SQL
-    end
-
     def followed_questions
         QuestionFollow.followed_questions_for_user_id(id)
     end
@@ -97,5 +81,54 @@ class User < ModelBase
             @id = QuestionsDatabase.last.insert_row_id
         end
         self
+    end
+
+    def slow_average_karma
+        # The following is an N+1 query, which is slow.
+        # Therefore, we prefer other methods, such as avg_karma.
+
+        total_likes = 0
+        total_questions = authored_questions.COUNT
+
+        authored_questions.each do |question|
+            total_likes += question.num_likes
+        end
+
+        total_likes / total_questions
+    end
+
+    def average_karma
+        QuestionsDatabase.get_first_value(<<-SQL, author_id: self.id)
+            SELECT
+                CAST(COUNT(question_likes.id) AS FLOAT) /
+                    COUNT(DISTINCT(question.id)) AS avg_karma
+            FROM
+                questions
+            LEFT OUTER JOIN
+                question_likes
+            ON
+                questions.id = question_likes.question_id
+            WHERE
+                questions.author_id = :author_id
+        SQL
+    end
+
+    def subquery_average_karma
+        QuestionsDatabase.get_first_value(<<-SQL, author_id: self.id)
+            SELECT
+                AVG(likes) AS avg_karma
+            FROM (
+                SELECT
+                    COUNT(question_likes.user_id) AS likes
+                FROM
+                    questions
+                LEFT OUTER JOIN
+                    question_likes ON questions.id = question_likes.question_id
+                WHERE
+                    questions.author_id = :author_id
+                GROUP BY
+                    questions.id
+            )
+        SQL
     end
 end
