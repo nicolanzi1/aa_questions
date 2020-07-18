@@ -16,12 +16,14 @@ class Tag
                 question_likes
             ON
                 question_tags.question_id = question_likes.question_id
-            ON
+            JOIN
                 tags
-            GROUP BY
+            ON
                 question_tags.tag_id = tags.id
-            ORDER BY
+            GROUP BY
                 tag_id
+            ORDER BY
+                COUNT(*) DESC
             LIMIT
                 ?
         SQL

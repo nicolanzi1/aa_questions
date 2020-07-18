@@ -160,7 +160,7 @@ CREATE TABLE question_tags (
     id INTEGER PRIMARY KEY,
     question_id INTEGER,
     tag_id INTEGER
-)
+);
 
 INSERT INTO question_tags (question_id, tag_id) VALUES (1, 1);
 INSERT INTO question_tags (question_id, tag_id) VALUES (1, 2);
