@@ -52,6 +52,30 @@ class Question < ModelBase
         { title: title, body: body, author_id: author_id }
     end
 
+    def save
+        if @id
+            QuestionsDatabase.execute(<<-SQL, attrs.merge({ id: id }))
+                UPDATE
+                    questions
+                SET
+                    title = :title, body = :body, author_id = :author_id
+                WHERE
+                    questions.id = :id
+            SQL
+        else
+            QuestionsDatabase.execute(<<-SQL, attrs)
+                INSERT INTO
+                    questions (title, body, author_id)
+                VALUES
+                    (:title, :body, :author_id)
+            SQL
+
+            @id = QuestionsDatabase.last_insert_row_id
+        end
+
+        self
+    end
+
     def author
         User.find_by_id(author_id)
     end
@@ -70,29 +94,5 @@ class Question < ModelBase
 
     def replies
         Reply.find_by_question_id(id)
-    end
-
-    def save
-        if @id
-            QuestionsDatabase.execute(<<-SQL, attrs.merge({ id: id }))
-                UPDATE
-                    questions
-                SET
-                    title = :title, body = :body, author_id = author_id
-                WHERE
-                    questions.id = :id
-            SQL
-        else
-            QuestionsDatabase.execute(<<-SQL, attrs)
-                INSERT INTO
-                    questions (title, body, author_id)
-                VALUES
-                    (:title, :body, :author_id)
-            SQL
-
-            @id = QuestionsDatabase.last_insert_row_id
-        end
-
-        self
     end
 end
