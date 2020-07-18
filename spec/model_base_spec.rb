@@ -79,4 +79,56 @@ describe ModelBase do
             expect(question.first.title).to eq("Rocky Question")
         end
     end
+
+    describe '#create' do
+        let(:user) {User.new(
+            {'fname' => "test_fname",
+             'lname' => "test_lname"}
+        )}
+        let(:reply) {Reply.new(
+            {'author_id' => 1,
+             'body' => "body", 'question_id' => 1,
+             "parent_reply_id" => 1 }
+        )}
+
+        context 'when called on different classes' do
+            it 'creates a new user and persists it to the database' do
+                user.create
+                expect(User.find_by_id(4)).to be_truthy
+            end
+
+            it 'creates a new reply and persists it to the database' do
+                reply.save
+                expect(Reply.find(3)).to be_truthy
+            end
+        end
+    end
+
+    describe '#update' do
+        let(:user) {User.new(
+            {'fname' => "test_fname",
+             'lname' => "test_lname"}
+        )}
+        let(:reply) {Reply.new(
+            {'author_id' => 1,
+             'body' => "body", 'question_id' => 1,
+             "parent_reply_id" => 1 }
+        )}
+
+        context 'when called on different classes' do
+            it "updates a previously saved user's attributes" do
+                user.save
+                user.fname = "updated_fname"
+                user.save
+                expect(User.find_by_id(4).fname).to eq("updated_fname")
+            end
+
+            it "updates a previously saved reply's attributes" do
+                reply.save
+                reply.body = "updated_body"
+                reply.save
+                expect(Reply.find(3).body).to eq("updated_body")
+            end
+        end
+    end
 end
