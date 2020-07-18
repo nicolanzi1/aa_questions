@@ -10,8 +10,12 @@ class QuestionFollow < ModelBase
                 users.*
             FROM
                 users
+            JOIN
+                question_follows
+            ON
+                users.id = question_follows.user_id
             WHERE
-                questions_follows.question_id = :question_id 
+                question_follows.question_id = :question_id 
         SQL
 
         users_data.map { |user_data| User.new(user_data) }
@@ -26,7 +30,7 @@ class QuestionFollow < ModelBase
             JOIN
                 question_follows
             ON
-                question.id = question_follows.question_id
+                questions.id = question_follows.question_id
             WHERE
                 question_follows.user_id = :user_id
         SQL
@@ -43,7 +47,7 @@ class QuestionFollow < ModelBase
             JOIN
                 question_follows
             ON
-                questions.id = questions_follows.question_id
+                questions.id = question_follows.question_id
             GROUP BY
                 questions.id
             ORDER BY
