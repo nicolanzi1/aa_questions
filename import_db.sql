@@ -141,3 +141,30 @@ VALUES
 -- Here's another way to add seed data:
 INSERT INTO question_likes (user_id, question_id) VALUES (1, 1);
 INSERT INTO question_likes (user_id, question_id) VALUES (1, 2);
+
+
+-- TAGS
+
+
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+INSERT INTO tags (name) VALUES ("Ruby");
+INSERT INTO tags (name) VALUES ("Javascript");
+INSERT INTO tags (name) VALUES ("CSS");
+INSERT INTO tags (name) VALUES ("HTML");
+
+CREATE TABLE question_tags (
+    id INTEGER PRIMARY KEY,
+    question_id INTEGER,
+    tag_id INTEGER
+)
+
+INSERT INTO question_tags (question_id, tag_id) VALUES (1, 1);
+INSERT INTO question_tags (question_id, tag_id) VALUES (1, 2);
+INSERT INTO question_tags (question_id, tag_id) VALUES (1, 3);
+INSERT INTO question_tags (question_id, tag_id) VALUES (1, 4);
+INSERT INTO question_tags (question_id, tag_id) VALUES (2, 3);
+INSERT INTO question_tags (question_id, tag_id) VALUES (2, 4);
